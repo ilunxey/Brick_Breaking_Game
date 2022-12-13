@@ -1,3 +1,5 @@
+package block_1;
+
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -19,7 +21,6 @@ public class timer {
 	String ddSecond, ddMinute;
 	
 	DecimalFormat dFormat = new DecimalFormat("00");
-	private JLabel conuterLabel;
 	
 	
 	
@@ -44,9 +45,9 @@ public class timer {
 		window.add(counterLabel);
 		window.setVisible(true);
 		
-		conuterLabel.setText("00:00"); ///제한시간을 3분으로 하고 싶으면 "00:00" -> "03:00"
+		counterLabel.setText("03:00"); ///제한시간을 3분으로 하고 싶으면 "00:00" -> "03:00"
 		second = 0;
-		minute = 0; //여기도 3으로 바꿔주면 대
+		minute = 3; //여기도 3으로 바꿔주면 대
 		countdownTimer();
 		timer.start();
 		
