@@ -9,21 +9,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JPanel;
+import javax.swing.JFrame;
 
-public class hardGamePlay extends JPanel implements KeyListener, ActionListener{
-
+public class hardGamePlay extends JFrame implements KeyListener, ActionListener{
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		private boolean play = false;
 		private int score = 0;
-		private int totalBricks = 28;
+		private int totalBricks = 40;
 		private int playerX = 300;
 		private int x_pos = 100;
 		private int y_pos = 350;
 		private int x_dir = -1;
 		private int y_dir = -2;
-		private MapGenerator map;
+		private MapGenerator hardmap;
 		public hardGamePlay() {
-			map = new MapGenerator(5, 8);
+			hardmap = new MapGenerator(5, 8);
 			addKeyListener(this);
 			setFocusable(true);
 			setFocusTraversalKeysEnabled(false);
@@ -33,7 +36,7 @@ public class hardGamePlay extends JPanel implements KeyListener, ActionListener{
 			g.setColor(Color.black);
 			g.fillRect(1, 1, 692, 592);
 			//map
-			map.draw((Graphics2D) g);
+			hardmap.draw((Graphics2D) g);
 			// the scores
 			g.setColor(Color.white);
 			g.setFont(new Font("serif", Font.BOLD, 25));
@@ -71,18 +74,18 @@ public class hardGamePlay extends JPanel implements KeyListener, ActionListener{
 				if (new Rectangle(x_pos, y_pos, 20, 20).intersects(new Rectangle(playerX, 550, 100, 8))) {  //블록 만들기
 					y_dir = -y_dir;
 				}
-					A: for (int i = 0; i < map.map.length; i++) {
-						for (int j = 0; j < map.map[0].length; j++) {
-							if (map.map[i][j] > 0) {
-								int brickX = j * map.brickWidth + 80;
-								int brickY = i * map.brickHeight + 50;
-								int brickWidth = map.brickWidth;
-								int brickHeight = map.brickHeight;
+					A: for (int i = 0; i < hardmap.map.length; i++) {
+						for (int j = 0; j < hardmap.map[0].length; j++) {
+							if (hardmap.map[i][j] > 0) {
+								int brickX = j * hardmap.brickWidth + 80;
+								int brickY = i * hardmap.brickHeight + 50;
+								int brickWidth = hardmap.brickWidth;
+								int brickHeight = hardmap.brickHeight;
 								Rectangle rect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
 								Rectangle ballRect = new Rectangle(x_pos, y_pos, 20, 20);
 								Rectangle brickRect = rect;
 							if (ballRect.intersects(brickRect)) {
-								map.setBrickValue(0, i, j);
+								hardmap.setBrickValue(0, i, j);
 								totalBricks--;
 								score += 5;
 								if (x_pos + 19 <= brickRect.x || x_pos + 1 >= brickRect.x + brickRect.width) {
@@ -129,8 +132,8 @@ public class hardGamePlay extends JPanel implements KeyListener, ActionListener{
 					x_dir = -1;
 					y_dir = -2;
 					score = 0;
-					totalBricks = 28;
-					map = new MapGenerator(4, 7);
+					totalBricks = 40;
+					hardmap = new MapGenerator(5, 8);
 					repaint();
 				}
 			}
@@ -152,4 +155,4 @@ public class hardGamePlay extends JPanel implements KeyListener, ActionListener{
 	//TODO Auto-generated method stub
 		}
 	}
-}
+

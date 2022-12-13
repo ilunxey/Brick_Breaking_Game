@@ -9,11 +9,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
-public class easyGamePlay extends JPanel implements KeyListener, ActionListener {
+public class easyGamePlay extends JFrame implements KeyListener, ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private boolean play = false;
 	private int score = 0;
 	private int totalBricks = 28;
@@ -131,7 +133,7 @@ public class easyGamePlay extends JPanel implements KeyListener, ActionListener 
 				y_dir = -2;
 				score = 0;
 				totalBricks = 28;
-				map = new MapGenerator(4, 7);
+				easymap = new MapGenerator(4, 7);
 				repaint();
 			}
 		}
