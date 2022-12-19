@@ -1,184 +1,144 @@
-package newBrickbracker;
+package 찐막이다_진짜;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-public class GamePlay extends JPanel implements KeyListener, ActionListener{
-	private boolean play = false;
-	private int score = 0;
-	private int totalBricks = 40;
-	private int playerX = 310;
-	private int x_pos = 150;
-	private int y_pos = 400;
-	private int x_dir = -1;
-	private int y_dir = -2;
-	private MapGenerator map;
-		public static void main(String[] args) {
-			JFrame f1 = new JFrame();
-			JButton b1 = new JButton("EASY");
-			b1.setBounds(100,100,100,40);
-			JButton b2 = new JButton("HARD");
-			b2.setBounds(100,100,100,100);
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+	
+	@SuppressWarnings("serial")
+	public class GamePlay extends JFrame{
 		
-			f1.add(b1,b2);
-			f1.setSize(300,400);
-			f1.setLayout(null);
-			f1.setVisible(true);
-		
-		}
-		public GamePlay() {
-			map = new MapGenerator(4, 10);
-			addKeyListener(this);
-			setFocusable(true);
-			setFocusTraversalKeysEnabled(false);
-		}
-		public void paint(Graphics g) {
-			// background
-			g.setColor(Color.black);
-			g.fillRect(1, 1, 692, 592);
-			// drawing map
-			map.draw((Graphics2D) g);
-			// borders
-			g.setColor(Color.yellow);
-			g.fillRect(0, 0, 3, 592);
-			g.fillRect(0, 0, 692, 3);
-			g.fillRect(691, 0, 3, 592);
-			// the scores
-			g.setColor(Color.white);
-			g.setFont(new Font("serif",Font.BOLD, 25));
-			g.drawString(""+score, 590,30);
-			// the timer
-			g.setColor(Color.RED);
-			g.setFont(new Font("serif",Font.BOLD, 30));
-			g.drawString("Time Over", 260,300);
-			//paddle
-			g.setColor(Color.blue);
-			g.fillOval(x_pos, y_pos, 20, 20);
+		private Image screenImage;
+		private Graphics screenGraphic;
 
-			//게임 결과
-			// when you won the game
-			if(totalBricks <= 0){
-				play = false;
-				x_dir = 0;
-				y_dir = 0;
-				g.setColor(Color.RED);
-				g.setFont(new Font("serif",Font.BOLD, 30));
-				g.drawString("You Won", 260,300);
-				g.setColor(Color.RED);
-				g.setFont(new Font("serif",Font.BOLD, 20));
-				g.drawString("Press (Enter) to Restart", 230,350);
-			}
-			// when you lose the game
-			if(y_pos > 570){
-				play = false;
-				x_dir = 0;
-				y_dir = 0;
-				g.setColor(Color.RED);
-				g.setFont(new Font("serif",Font.BOLD, 30));
-				g.drawString("Game Over, Scores: "+score, 190,300);
-				g.setColor(Color.RED);
-				g.setFont(new Font("serif",Font.BOLD, 20));
-				g.drawString("Press (Enter) to Restart", 230,350);
-			}
-			g.dispose();
-		}
-		public void keyReleased(KeyEvent e) {}
-		public void moveRight(){
-			play = true;
-			playerX+=10;
-		}
-		public void moveLeft(){
-			play = true;
-			playerX-=10;
-		}
-		public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode() == KeyEvent.VK_RIGHT){	
-					if(playerX >= 600){
-						playerX = 600;
-					}else{
-						moveRight();
-					}
-				}
-				if (e.getKeyCode() == KeyEvent.VK_LEFT){
-					if(playerX < 10){
-						playerX = 10;
-					}else{
-						moveLeft();
-					}
-				}
-				if (e.getKeyCode() == KeyEvent.VK_ENTER){
-					if(!play){
-						play = true;
-						x_pos = 150;
-						y_pos = 400;
-						x_dir = -1;
-						y_dir = -2;
-						playerX = 310;
-						score = 0;
-						totalBricks = 40;
-						map = new MapGenerator(4, 10);
-						repaint();
-					}
-			}
-		}
-		//Rectangle과 new Rectangle이 교차할지 결정함 아니 근데 넘 모르겠다 여기
-		public void actionPerformed(ActionEvent e){
-			if(play){
-				if(new Rectangle(x_pos, y_pos, 20, 20).intersects(new Rectangle(playerX, 550, 30, 8))){
-					y_dir = -y_dir;
-					x_dir = -2;
-				}else if(new Rectangle(x_pos, y_pos, 20, 20).intersects(new Rectangle(playerX + 70, 550, 30, 8))){
-					y_dir = -y_dir;
-					x_dir = x_dir + 1;
-				}else if(new Rectangle(x_pos, y_pos, 20, 20).intersects(new Rectangle(playerX + 30, 550, 40, 8))){
-					y_dir = -y_dir;
-				}
-				// check map collision with the ball
-				A: for(int i = 0; i<map.map.length; i++){
-					for(int j =0; j<map.map[0].length; j++){
-						if(map.map[i][j] > 0){
-							//scores++;
-							int brickX = j * map.brickWidth + 80;
-							int brickY = i * map.brickHeight + 50;
-							int brickWidth = map.brickWidth;
-							int brickHeight = map.brickHeight;
-							Rectangle rect = new Rectangle(brickX, brickY, brickWidth, brickHeight);
-							Rectangle ballRect = new Rectangle(x_pos, y_pos, 20, 20);
-							Rectangle brickRect = rect;
-						if(ballRect.intersects(brickRect)){
-							map.setBrickValue(0, i, j);
-							score+=10;
-							totalBricks--;
-				// when ball hit right or left of brick
-						if(x_pos + 19 <= brickRect.x || x_pos + 1 >= brickRect.x + brickRect.width){
-							x_dir = -x_dir;
-						}
-						// when ball hits top or bottom of brick
-						else{
-							y_dir = -y_dir;
-						}
-						break A;
-						}
-						}
-					}
-				}
-				x_dir += x_dir;
-				y_dir += y_dir;
-				if(x_pos < 0){
-					x_dir = -x_dir;
-				}
-				if(y_pos < 0){
-					y_dir = -y_dir;
-				}
-				if(x_pos > 670){
-					x_dir = -x_dir;
-				}
-				repaint();
+		private ImageIcon startButtonBasicImage = new ImageIcon(Main.class.getResource("../images/STARTBUTTON_BASIC.png"));
+		private ImageIcon startButtonPussImage = new ImageIcon(Main.class.getResource("../images/STARTBUTTON_PUSS.png"));
+		private ImageIcon easyButtonBasicImage = new ImageIcon(Main.class.getResource("../images/EASY.png"));
+		private ImageIcon easyButtonPussImage = new ImageIcon(Main.class.getResource("../images/EASY_PUSS.png"));
+		private ImageIcon hardButtonBasicImage = new ImageIcon(Main.class.getResource("../images/HARD.png"));
+		private ImageIcon hardButtonPussImage = new ImageIcon(Main.class.getResource("../images/HARD_PUSS.png"));
+		
+		private Image start_image = new ImageIcon(Main.class.getResource("../images/start_image (3).jpg")).getImage();
+		private Image level_image = new ImageIcon(Main.class.getResource("../images/level_screen.jpg")).getImage();
+		
+		private JButton startButton = new JButton(startButtonBasicImage);
+		private JButton easyButton = new JButton(easyButtonBasicImage);
+		private JButton hardtButton = new JButton(hardButtonBasicImage);
+		
+		private int mouseX, mouseY;
+		
+		private boolean isMainScreen = false;
 			
-			}
+		public GamePlay() {
+			setUndecorated(true);
+			setTitle("Brick_Brack");
+			setSize(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
+			setResizable(false);
+			setLocationRelativeTo(null);
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setVisible(true);
+			setBackground(new Color(0, 0, 0, 0));
+			setLayout(null);
+
+			easyButton.setVisible(false);
+			hardtButton.setVisible(false);
+			
+			startButton.setBounds(690, 250, 500, 100);
+			startButton.setBorderPainted(false);
+			startButton.setContentAreaFilled(false);
+			startButton.setFocusPainted(false);
+			startButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					startButton.setIcon(startButtonPussImage);
+					startButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					startButton.setIcon(startButtonBasicImage);
+					startButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//게임 시작 이벤트
+					startButton.setVisible(false);
+					easyButton.setVisible(true);
+					hardtButton.setVisible(true);
+					start_image = new ImageIcon(Main.class.getResource("../images/level_screen.jpg")).getImage();
+					isMainScreen = true;
+				}
+			});
+			add(startButton);
+			
+			easyButton.setBounds(130, 150, 500, 500);
+			easyButton.setBorderPainted(false);
+			easyButton.setContentAreaFilled(false);
+			easyButton.setFocusPainted(false);
+			easyButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					easyButton.setIcon(easyButtonPussImage);
+					easyButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					easyButton.setIcon(easyButtonBasicImage);
+					easyButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//이지모드 이벤트
+				}
+			});
+			add(easyButton);
+			
+			hardtButton.setBounds(640, 150, 500, 500);
+			hardtButton.setBorderPainted(false);
+			hardtButton.setContentAreaFilled(false);
+			hardtButton.setFocusPainted(false);
+			hardtButton.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					hardtButton.setIcon(hardButtonPussImage);
+					hardtButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					hardtButton.setIcon(hardButtonBasicImage);
+					hardtButton.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				}
+				@Override
+				public void mousePressed(MouseEvent e) {
+					//하드 모드 이벤트
+				}
+			});
+			add(hardtButton);
+			
 		}
+		
+		public void paint(Graphics g) {
+			screenImage = createImage(Main.SCREEN_WIDTH, Main.SCREEN_HEIGHT);
+			screenGraphic = screenImage.getGraphics();
+			screenDraw(screenGraphic);
+			g.drawImage(screenImage, 0, 0, null);
+		}
+
+		public void screenDraw(Graphics g) {
+			g.drawImage(start_image, 0, 0, null);
+			//if(isMainScreen)
+			//{
+				//g.drawImage(selectedImage, 340, 100, null);
+			//}
+			paintComponents(g);
+			this.repaint();
+		}
+		
+		
+
+	
 }
